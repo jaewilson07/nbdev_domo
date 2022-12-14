@@ -108,7 +108,7 @@ class _DomoAuth_Required:
     domo_instance: str
 
     def __post_init__(self):
-        if domo_instance:
+        if self.domo_instance:
             self.set_manual_login()
 
     def set_manual_login(self):
