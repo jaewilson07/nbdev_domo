@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "nbdev-domo"
+  site-url: "https://jaewilson07.github.io/nbdev_domo"
+  description: ""
+  repo-branch: main
+  repo-url: "https://github.com/jaewilson07/nbdev_domo"
