@@ -9,7 +9,7 @@ documentation.
 ## Install
 
 ``` sh
-pip install nbdev_cards
+pip install nbdev_domo
 ```
 
 ## How to use
@@ -21,3 +21,7 @@ Fill me in please! Don’t forget code examples:
 ```
 
     2
+
+``` python
+# DomoFullAuth(domo_instance = 'test', domo_password = 'test', domo_username='test2@domo.com')
+```
