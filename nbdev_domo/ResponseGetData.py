@@ -14,16 +14,16 @@ import aiohttp
 from typing import  Union
 
 
-# %% ../nbs/99_ResponseGetData.ipynb 4
+# %% ../nbs/99_ResponseGetData.ipynb 5
 @dataclass
 class ResponseGetData:
-    """preferred response class for all API Requests"""
+    """preferred response class for all API routes"""
     status: int
     response: Union[list, dict, str]
     is_success: bool
     auth: dict = field(default_factory=dict)
 
-# %% ../nbs/99_ResponseGetData.ipynb 8
+# %% ../nbs/99_ResponseGetData.ipynb 10
 @patch_to(ResponseGetData, cls_method = True)
 def _from_requests_response(cls, res : requests.Response #requests response object
                            ) -> ResponseGetData:
@@ -52,7 +52,7 @@ def _from_requests_response(cls, res : requests.Response #requests response obje
         is_success=False
     )
 
-# %% ../nbs/99_ResponseGetData.ipynb 12
+# %% ../nbs/99_ResponseGetData.ipynb 15
 @patch_to(ResponseGetData, cls_method = True)
 async def _from_aiohttp_response(cls, res : aiohttp.ClientResponse #requests response object
                            ) -> ResponseGetData:
