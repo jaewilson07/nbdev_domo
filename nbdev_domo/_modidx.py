@@ -63,4 +63,6 @@ d = { 'settings': { 'branch': 'main',
                                                                                                                    'nbdev_domo/ResponseGetData.py'),
                                             'nbdev_domo.ResponseGetData.ResponseGetData._from_requests_response': ( 'responsegetdata.html#responsegetdata._from_requests_response',
                                                                                                                     'nbdev_domo/ResponseGetData.py')},
-            'nbdev_domo.core': {'nbdev_domo.core.foo': ('core.html#foo', 'nbdev_domo/core.py')}}}
+            'nbdev_domo.utils': { 'nbdev_domo.utils.DictDot': ('utils.html#dictdot', 'nbdev_domo/utils.py'),
+                                  'nbdev_domo.utils.DictDot.__getattr__': ('utils.html#dictdot.__getattr__', 'nbdev_domo/utils.py'),
+                                  'nbdev_domo.utils.DictDot.__init__': ('utils.html#dictdot.__init__', 'nbdev_domo/utils.py')}}}

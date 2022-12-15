@@ -2,6 +2,6 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_core.ipynb
       - 95_DomoAuth.ipynb
       - 99_ResponseGetData.ipynb
+      - 99_Utils.ipynb
