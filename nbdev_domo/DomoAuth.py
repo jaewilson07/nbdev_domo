@@ -100,7 +100,7 @@ async def test_access_token(domo_access_token: str,  # as provided in Domo > Adm
     return await rgd.ResponseGetData._from_aiohttp_response(res)
 
 
-# %% ../nbs/95_DomoAuth.ipynb 22
+# %% ../nbs/95_DomoAuth.ipynb 23
 @dataclass
 class _DomoAuth_Required:
     """required parameters for all Domo Auth classes"""
@@ -117,7 +117,7 @@ class _DomoAuth_Required:
 
 @dataclass
 class _DomoAuth_Optional:
-    """parameters are defined after initialization"""
+    """optional parameters for Domo Auth classes that should be defined during initialization or during the Token / Authenitcation process"""
 
     token: Optional[str] = field(default=None, repr=False)
     token_name: Optional[str] = field(default=None)
@@ -135,15 +135,14 @@ class _DomoAuth_Optional:
         pass
 
 
-# %% ../nbs/95_DomoAuth.ipynb 23
+# %% ../nbs/95_DomoAuth.ipynb 24
 @dataclass
 class DomoAuth(_DomoAuth_Optional, _DomoAuth_Required):
-    """abstract DomoAuth class"""
+    """abstract DomoAuth class with all parameters and methods common across all Auth methods"""
 
     pass
 
-
-# %% ../nbs/95_DomoAuth.ipynb 27
+# %% ../nbs/95_DomoAuth.ipynb 28
 class DomoErrror(Exception):
     """base exception"""
 
@@ -158,7 +157,7 @@ class DomoErrror(Exception):
         super().__init__(self.message)
 
 
-# %% ../nbs/95_DomoAuth.ipynb 28
+# %% ../nbs/95_DomoAuth.ipynb 29
 class InvalidCredentialsError(DomoErrror):
     """return invalid credentials sent to API"""
 
@@ -181,7 +180,7 @@ class InvalidInstanceError(DomoErrror):
         super().__init__(status=status, message=message, domo_instance=domo_instance)
 
 
-# %% ../nbs/95_DomoAuth.ipynb 31
+# %% ../nbs/95_DomoAuth.ipynb 32
 @dataclass
 class _DomoFullAuth_Required(_DomoAuth_Required):
     """mix requied parameters for DomoFullAuth"""
@@ -189,7 +188,7 @@ class _DomoFullAuth_Required(_DomoAuth_Required):
     domo_username: str
     domo_password: str = field(repr=False)
 
-# %% ../nbs/95_DomoAuth.ipynb 32
+# %% ../nbs/95_DomoAuth.ipynb 33
 @dataclass
 class DomoFullAuth(_DomoAuth_Optional, _DomoFullAuth_Required):
     """use for full authentication token"""
@@ -237,7 +236,7 @@ class DomoFullAuth(_DomoAuth_Optional, _DomoFullAuth_Required):
         return self.token
 
 
-# %% ../nbs/95_DomoAuth.ipynb 38
+# %% ../nbs/95_DomoAuth.ipynb 39
 @dataclass
 class _DomoTokenAuth_Required(_DomoAuth_Required):
     """mix requied parameters for DomoFullAuth"""
@@ -245,7 +244,7 @@ class _DomoTokenAuth_Required(_DomoAuth_Required):
     domo_access_token: str = field(repr=False)
 
 
-# %% ../nbs/95_DomoAuth.ipynb 39
+# %% ../nbs/95_DomoAuth.ipynb 40
 @dataclass
 class DomoTokenAuth(_DomoAuth_Optional, _DomoTokenAuth_Required):
     """
@@ -290,7 +289,7 @@ class DomoTokenAuth(_DomoAuth_Optional, _DomoTokenAuth_Required):
 
         return self.token
 
-# %% ../nbs/95_DomoAuth.ipynb 43
+# %% ../nbs/95_DomoAuth.ipynb 44
 @dataclass
 class _DomoDeveloperAuth_Required(_DomoAuth_Required):
     """mix requied parameters for DomoFullAuth"""
@@ -299,7 +298,7 @@ class _DomoDeveloperAuth_Required(_DomoAuth_Required):
     domo_client_secret: str = field(repr=False)
 
 
-# %% ../nbs/95_DomoAuth.ipynb 44
+# %% ../nbs/95_DomoAuth.ipynb 45
 @dataclass(init=False)
 class DomoDeveloperAuth(_DomoAuth_Optional, _DomoDeveloperAuth_Required):
     """use for full authentication token"""
