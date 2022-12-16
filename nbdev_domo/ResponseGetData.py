@@ -11,7 +11,7 @@ from fastcore.test import test_eq
 import requests
 import asyncio
 import aiohttp
-from typing import  Union
+from typing import Union, Optional
 
 
 # %% ../nbs/99_ResponseGetData.ipynb 5
@@ -21,65 +21,80 @@ class ResponseGetData:
     status: int
     response: Union[list, dict, str]
     is_success: bool
-    auth: dict = field(default_factory=dict)
+    auth_header: Optional[dict] = None
+
 
 # %% ../nbs/99_ResponseGetData.ipynb 10
-@patch_to(ResponseGetData, cls_method = True)
-def _from_requests_response(cls, res : requests.Response #requests response object
-                           ) -> ResponseGetData:
+@patch_to(ResponseGetData, cls_method=True)
+def _from_requests_response(cls, res: requests.Response,  # requests response object
+                            auth_header: Optional[dict] = None # auth header used to authenticate request
+                            ) -> ResponseGetData:
     """returns ResponseGetData"""
-    
-    #JSON responses
+
+    # JSON responses
     if res.ok and "application/json" in res.headers.get("Content-Type", {}):
         return ResponseGetData(
-            status = res.status_code, 
-            response = res.json(),
-            is_success=True
+            status=res.status_code,
+            response=res.json(),
+            is_success=True,
+            auth_header=auth_header
         )
 
-    #default text responses
+    # default text responses
     elif res.ok:
         return ResponseGetData(
             status=res.status_code,
             response=res.text,
-            is_success=True
+            is_success=True,
+            auth_header=auth_header
         )
-    
+
     # errors
     return ResponseGetData(
         status=res.status_code,
         response=res.reason,
-        is_success=False
+        is_success=False,
+        auth_header=auth_header
     )
 
+
 # %% ../nbs/99_ResponseGetData.ipynb 15
-@patch_to(ResponseGetData, cls_method = True)
-async def _from_aiohttp_response(cls, res : aiohttp.ClientResponse #requests response object
-                           ) -> ResponseGetData:
-    
+@patch_to(ResponseGetData, cls_method=True)
+async def _from_aiohttp_response(cls, res: aiohttp.ClientResponse,  # requests response object
+                                 auth_header: Optional[dict] = None, # auth header used to authenticate request
+                                 ) -> ResponseGetData:
+
     """async method returns ResponseGetData"""
-    
-    if res.ok and "application/json" in res.headers.get("Content-Type", {}) :
+
+    if res.ok and "application/json" in res.headers.get("Content-Type", {}):
         try:
             return ResponseGetData(
-                status=res.status, response=await res.json(), is_success=True
+                status=res.status, response=await res.json(), is_success=True, auth_header=auth_header
             )
 
         # handle if unable to decode json()
         except asyncio.TimeoutError as e:
             print(e)
-            print("response included json, but defaulted to backup decode method")
 
             return ResponseGetData(
-                status=res.status, response=await res.json(content_type=None), is_success=True
+                status=res.status, response=await res.json(content_type=None), is_success=True, auth_header=auth_header
+            )
+
+        except Exception as e:
+            print(e)
+
+            data = await res.read()
+            return ResponseGetData(
+                status=res.status, response=data.decode(), is_success=True, auth_header=auth_header
             )
 
         # response is text
     elif res.ok:
         return ResponseGetData(
-            status=res.status, response=await res.text(), is_success=True
+            status=res.status, response=await res.text(), is_success=True, auth_header=auth_header
         )
 
     # response is error
     else:
-        return ResponseGetData(status=res.status, response=str(res.reason), is_success=False)
+        return ResponseGetData(status=res.status, response=str(res.reason), is_success=False, auth_header=auth_header)
+

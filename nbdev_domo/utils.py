@@ -9,7 +9,9 @@ from types import SimpleNamespace
 
 # %% ../nbs/99_Utils.ipynb 4
 class DictDot(SimpleNamespace):
-    """convenience class that converts dictionaries to objects with attributes that can be accessed with dot notation."""
+    """
+    convenience class that converts dictionaries to objects with attributes that can be accessed with dot notation.
+    """
 
     def __init__(self,
                  dictionary,
