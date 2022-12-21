@@ -4,9 +4,6 @@
 __all__ = ['TransportSync', 'TransportAsync']
 
 # %% ../nbs/95_Transport.ipynb 3
-from fastcore.basics import patch_to
-from fastcore.test import test_eq
-
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -18,10 +15,10 @@ from requests_toolbelt.utils import dump
 import json
 
 import requests
-
 import aiohttp
 import asyncio
 
+from fastcore.basics import patch_to
 from .ResponseGetData import ResponseGetData
 
 
