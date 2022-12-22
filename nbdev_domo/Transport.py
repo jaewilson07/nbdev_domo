@@ -4,24 +4,18 @@
 __all__ = ['TransportSync', 'TransportAsync']
 
 # %% ../nbs/95_Transport.ipynb 3
-from fastcore.basics import patch_to
-from fastcore.test import test_eq
-
-from dataclasses import dataclass, field
-from enum import Enum
-
-from abc import abstractmethod
-
-from typing import Optional, Union
-
-from requests_toolbelt.utils import dump
 import json
-
 import requests
-
 import aiohttp
 import asyncio
 
+from requests_toolbelt.utils import dump
+
+from enum import Enum
+from abc import abstractmethod
+from typing import Optional, Union
+
+from fastcore.basics import patch_to
 from .ResponseGetData import ResponseGetData
 
 
@@ -182,8 +176,9 @@ class TransportSync(RequestTransport):
                  url: str,
                  method: HTTPMethod,
                  headers: dict,
-                 params: dict = field(default_factory=dict),
-                 body: Union[str, dict, None] = None, **kwargs
+                 params: Optional[dict] = None,
+                 body: Union[str, dict, None] = None, 
+                 **kwargs
                  ):
 
         # self.logger.debug('{} {} {}'.format(method, url, body))
@@ -220,7 +215,7 @@ class TransportAsync(RequestTransport):
                        url: str,
                        method: HTTPMethod,
                        headers: dict,
-                       params: dict = field(default_factory=dict),
+                       params: Optional[dict] = None,
                        body: Union[str, dict, None] = None,
                        session: Optional[aiohttp.ClientSession] = None,
                        ):
