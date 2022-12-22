@@ -4,13 +4,9 @@
 __all__ = ['Logger']
 
 # %% ../nbs/95_Logger.ipynb 3
-import aiohttp
-import asyncio
+import datetime as dt
 
 from typing import Optional, List
-from abc import ABC
-
-import datetime as dt
 
 from fastcore.basics import patch_to
 

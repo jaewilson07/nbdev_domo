@@ -4,14 +4,14 @@
 __all__ = ['ResponseGetData']
 
 # %% ../nbs/99_ResponseGetData.ipynb 3
-from dataclasses import dataclass, field
-from fastcore.utils import patch_to
-from fastcore.test import test_eq
-
 import requests
 import asyncio
 import aiohttp
+
+from dataclasses import dataclass, field
 from typing import Union, Optional
+
+from fastcore.utils import patch_to
 
 
 # %% ../nbs/99_ResponseGetData.ipynb 5
@@ -68,7 +68,7 @@ async def _from_aiohttp_response(cls, res: aiohttp.ClientResponse,  # requests r
 
     if res.ok and "application/json" in res.headers.get("Content-Type", {}):
         try:
-            return ResponseGetData(
+            return cls(
                 status=res.status, response=await res.json(), is_success=True, auth_header=auth_header
             )
 
@@ -76,7 +76,7 @@ async def _from_aiohttp_response(cls, res: aiohttp.ClientResponse,  # requests r
         except asyncio.TimeoutError as e:
             print(e)
 
-            return ResponseGetData(
+            return cls(
                 status=res.status, response=await res.json(content_type=None), is_success=True, auth_header=auth_header
             )
 
@@ -84,17 +84,17 @@ async def _from_aiohttp_response(cls, res: aiohttp.ClientResponse,  # requests r
             print(e)
 
             data = await res.read()
-            return ResponseGetData(
+            return cls(
                 status=res.status, response=data.decode(), is_success=True, auth_header=auth_header
             )
 
         # response is text
     elif res.ok:
-        return ResponseGetData(
+        return cls(
             status=res.status, response=await res.text(), is_success=True, auth_header=auth_header
         )
 
     # response is error
     else:
-        return ResponseGetData(status=res.status, response=str(res.reason), is_success=False, auth_header=auth_header)
+        return cls(status=res.status, response=str(res.reason), is_success=False, auth_header=auth_header)
 
