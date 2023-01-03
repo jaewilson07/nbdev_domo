@@ -281,7 +281,7 @@ class DomoTokenAuth(_DomoAuth_Optional, _DomoTokenAuth_Required):
 
             raise InvalidCredentialsError(
                 status=res.status,
-                message=res.message,
+                message=message,
                 domo_instance=self.domo_instance,
             )
 
