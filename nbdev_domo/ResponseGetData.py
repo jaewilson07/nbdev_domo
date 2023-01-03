@@ -21,7 +21,7 @@ class ResponseGetData:
     status: int
     response: Union[list, dict, str]
     is_success: bool
-    auth_header: Optional[dict] = None
+    auth_header: Optional[dict] = field(default = None, repr = False)
 
 
 # %% ../nbs/99_ResponseGetData.ipynb 10

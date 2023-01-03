@@ -62,6 +62,11 @@ class RequestTransport:
         headers = self._headers_default_receive_json()
         headers['Content-Type'] = 'application/json'
         return headers
+    
+    def _headers_send_text(self):
+        headers = self._headers_default_receive_json()
+        headers['Content-Type'] = 'text/plain'
+        return headers
 
     def _headers_send_csv(self):
         headers = self._headers_default_receive_json()
@@ -127,6 +132,14 @@ def put(self, url, body, request_timeout: Optional[int] = None, session: Optiona
     return self._request(url, HTTPMethod.PUT, headers, {},
                          self._obj_to_json(body), session=session)
 
+@patch_to(RequestTransport)
+def put_text(self, url, body, request_timeout: Optional[int] = None, session: Optional[aiohttp.ClientSession] = None, debug: bool = False):
+    if request_timeout:
+        self.request_timeout = request_timeout
+
+    headers = self._headers_send_text()
+    return self._request(url, HTTPMethod.PUT, headers, {},
+                         str(body), session=session, debug = debug)
 
 @patch_to(RequestTransport)
 def put_csv(self, url, body, request_timeout: Optional[int] = None, session: Optional[aiohttp.ClientSession] = None):
@@ -218,6 +231,7 @@ class TransportAsync(RequestTransport):
                        params: Optional[dict] = None,
                        body: Union[str, dict, None] = None,
                        session: Optional[aiohttp.ClientSession] = None,
+                       debug : bool = False
                        ):
 
         session = session or self.session
@@ -234,6 +248,9 @@ class TransportAsync(RequestTransport):
                         'headers': headers,
                         'params': params,
                         'data': body}
+
+        if debug:
+            print(request_args)
 
         try:
             res = await getattr(session, method.value.lower())(
