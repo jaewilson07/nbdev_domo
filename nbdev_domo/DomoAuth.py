@@ -11,6 +11,7 @@ import aiohttp
 from typing import Optional, Union
 import nbdev_domo.ResponseGetData as rgd
 from nbdev_domo.Transport import TransportAsync
+from nbdev_domo.Logger import Logger
 
 # %% ../nbs/90_DomoAuth.ipynb 5
 async def get_full_auth(
