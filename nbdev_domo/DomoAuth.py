@@ -109,6 +109,8 @@ class _DomoAuth_Optional:
 
     url_manual_login: Optional[str] = None
 
+    logger : Optional[Logger] = None
+
     async def get_auth_token(self) -> Union[str, None]:
         """placeholder method"""
         pass
@@ -180,6 +182,10 @@ class _DomoFullAuth_Required(_DomoAuth_Required):
 class DomoFullAuth(_DomoAuth_Optional, _DomoFullAuth_Required):
     """use for full authentication token"""
 
+    def __post_init__(self):
+        self.logger = self.logger or Logger(app_name = 'default_domo_full_auth')
+            
+
     async def generate_auth_header(self, token: str = None) -> dict:
         if not self.token:
             await self.get_auth_token()
@@ -201,13 +207,21 @@ class DomoFullAuth(_DomoAuth_Optional, _DomoFullAuth_Required):
         )
 
         if res.is_success and res.response.get("reason") == "INVALID_CREDENTIALS":
+            message = str(res.response.get("reason"))
+            
+            self.logger.log_error(message)
+
             raise InvalidCredentialsError(
                 status=res.status,
-                message=str(res.response.get("reason")),
+                message=message,
                 domo_instance=self.domo_instance,
             )
 
         if res.status == 403:
+            message = f"invalid instance"
+
+            self.logger.log_error(message)
+
             raise InvalidInstanceError(
                 status=res.status,
                 message="INVALID INSTANCE",
@@ -239,6 +253,9 @@ class DomoTokenAuth(_DomoAuth_Optional, _DomoTokenAuth_Required):
     Necessary in cases where direct sign on is not permitted
     """
 
+    def __post_init__(self):
+        self.logger = self.logger or Logger(app_name='default_domo_token_auth')
+
     def generate_auth_header(self, token: str) -> dict:
         self.auth_header = {"x-domo-developer-token": token}
         return self.auth_header
@@ -258,9 +275,12 @@ class DomoTokenAuth(_DomoAuth_Optional, _DomoTokenAuth_Required):
         )
 
         if res.status == 401 and res.response == "Unauthorized":
+            message = res.response
+            self.logger.log_error(message)
+
             raise InvalidCredentialsError(
                 status=res.status,
-                message=res.response,
+                message=res.message,
                 domo_instance=self.domo_instance,
             )
 
@@ -287,10 +307,12 @@ class _DomoDeveloperAuth_Required(_DomoAuth_Required):
 class DomoDeveloperAuth(_DomoAuth_Optional, _DomoDeveloperAuth_Required):
     """use for full authentication token"""
 
-    def __init__(self, domo_client_id: str, domo_client_secret: str):
+    def __init__(self, domo_client_id: str, domo_client_secret: str, logger : Optional[Logger] = None):
         self.domo_client_id = domo_client_id
         self.domo_client_secret = domo_client_secret
         self.domo_instance = ""
+
+        self.logger = logger or Logger('default_domo_developer_auth')
 
     async def generate_auth_header(self, token: str) -> dict:
         if not self.token:
@@ -311,9 +333,12 @@ class DomoDeveloperAuth(_DomoAuth_Optional, _DomoDeveloperAuth_Required):
         )
 
         if res.status == 401:
+            message = str(res.response)
+
+            self.logger.log_error(message)
             raise InvalidCredentialsError(
                 status=res.status,
-                message=str(res.response),
+                message= message,
                 domo_instance=self.domo_instance,
             )
 
