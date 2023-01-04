@@ -28,10 +28,10 @@ import nbdev_domo.Transport as tr
 import nbdev_domo.DomoAuth as dmda
 import nbdev_domo.Logger as lg
 
+
 # %% ../nbs/80_DomoAccount.ipynb 4
 ACCOUNT_ID = 5
 ACCOUNT_DATA_PROVIDER_TYPE = "domo-governance-d14c2fef-49a8-4898-8ddd-f64998005600"
-
 
 # %% ../nbs/80_DomoAccount.ipynb 6
 async def get_accounts(
@@ -51,7 +51,6 @@ async def get_accounts(
     )
 
     return await domo_transport.get(url=url)
-
 
 # %% ../nbs/80_DomoAccount.ipynb 9
 async def get_account_from_id(
@@ -73,7 +72,6 @@ async def get_account_from_id(
 
     return await domo_transport.get(url=url)
 
-
 # %% ../nbs/80_DomoAccount.ipynb 12
 async def get_account_config(
     account_id: int,
@@ -94,7 +92,6 @@ async def get_account_config(
     )
 
     return await domo_transport.get(url=url)
-
 
 # %% ../nbs/80_DomoAccount.ipynb 16
 async def update_account_config(
@@ -120,6 +117,7 @@ async def update_account_config(
         url=url, body=config_body, debug=debug, session=session
     )
 
+
 # %% ../nbs/80_DomoAccount.ipynb 17
 async def update_account_name(
     account_id: int,
@@ -143,7 +141,6 @@ async def update_account_name(
         url=url, body=account_name, session=session, debug=debug
     )
 
-
 # %% ../nbs/80_DomoAccount.ipynb 21
 async def create_account_route(
     config_body: dict,  # config body is dependent on data provider type
@@ -166,7 +163,6 @@ async def create_account_route(
         url=url, body=config_body, debug=debug, session=session
     )
 
-
 # %% ../nbs/80_DomoAccount.ipynb 23
 async def delete_account_route(
     account_id: str,
@@ -188,7 +184,6 @@ async def delete_account_route(
 
     return await domo_transport.delete(url=url, debug=debug, session=session)
 
-
 # %% ../nbs/80_DomoAccount.ipynb 25
 class DomoAccount_Config(ABC):
     """
@@ -207,7 +202,6 @@ class DomoAccount_Config(ABC):
     @abstractmethod
     def to_json(self):
         pass
-
 
 # %% ../nbs/80_DomoAccount.ipynb 27
 @dataclass
@@ -242,8 +236,8 @@ class DomoAccount_Config_Athena_HighBandwidthConnector(DomoAccount_Config):
 @dataclass
 class DomoAccount_Config_AbstractCredential(DomoAccount_Config):
     credentials: str  # typically we recommend implementing dictionaries in the body, but the data is actually stored as a string
-    data_provider_type: str = 'abstract-credential-store'
-    
+    data_provider_type: str = "abstract-credential-store"
+
     @classmethod
     def _from_json(cls, obj):
 
@@ -261,7 +255,7 @@ class DomoAccount_Config_AbstractCredential(DomoAccount_Config):
 class DomoAccount_Config_DomoGovernance(DomoAccount_Config):
     api_key: str
     customer: str
-    data_provider_type: str = 'domo-governance'
+    data_provider_type: str = "domo-governance"
 
     @classmethod
     def _from_json(cls, obj):
@@ -278,11 +272,8 @@ class AccountConfig(Enum):
     """enum to match account types with config classes"""
 
     amazon_athena_high_bandwidth = DomoAccount_Config_Athena_HighBandwidthConnector
-
     abstract_credential_store = DomoAccount_Config_AbstractCredential
-
     domo_governance = DomoAccount_Config_DomoGovernance
-
 
 # %% ../nbs/80_DomoAccount.ipynb 31
 @dataclass
@@ -321,7 +312,7 @@ class DomoAccount:
             created_dt=utils.convert_epoch_millisecond_to_datetime(dd.createdAt),
             modified_dt=utils.convert_epoch_millisecond_to_datetime(dd.modifiedAt),
             full_auth=full_auth,
-            logger = logger
+            logger=logger,
         )
 
     @staticmethod
@@ -346,16 +337,19 @@ class InvalidAccountError(dmda.DomoErrror):
 
         super().__init__(status=status, message=message, domo_instance=domo_instance)
 
+
 # | export
 
 
 class InvalidAccountConfigError(dmda.DomoErrror):
     """return if DomoAccount does not have a valid config attribute"""
 
-    def __init__(self,
-                 status: Optional[int] = None,  # API request status
-                 message="invalid account config",
-                 domo_instance: Optional[str] = None,):
+    def __init__(
+        self,
+        status: Optional[int] = None,  # API request status
+        message="invalid account config",
+        domo_instance: Optional[str] = None,
+    ):
 
         super().__init__(status=status, message=message, domo_instance=domo_instance)
 
@@ -363,10 +357,12 @@ class InvalidAccountConfigError(dmda.DomoErrror):
 class UpdateAccountConfigError(dmda.DomoErrror):
     """return if DomoAccount does not have a valid config attribute"""
 
-    def __init__(self,
-                 status: Optional[int] = None,  # API request status
-                 message="failed to update account config",
-                 domo_instance: Optional[str] = None,):
+    def __init__(
+        self,
+        status: Optional[int] = None,  # API request status
+        message="failed to update account config",
+        domo_instance: Optional[str] = None,
+    ):
 
         super().__init__(status=status, message=message, domo_instance=domo_instance)
 
@@ -374,13 +370,14 @@ class UpdateAccountConfigError(dmda.DomoErrror):
 class DeleteAccountError(dmda.DomoErrror):
     """return if fail to delete Domo Account"""
 
-    def __init__(self,
-                 status: Optional[int] = None,  # API request status
-                 message="failed to delete account",
-                 domo_instance: Optional[str] = None,):
+    def __init__(
+        self,
+        status: Optional[int] = None,  # API request status
+        message="failed to delete account",
+        domo_instance: Optional[str] = None,
+    ):
 
         super().__init__(status=status, message=message, domo_instance=domo_instance)
-
 
 # %% ../nbs/80_DomoAccount.ipynb 33
 @patch_to(DomoAccount, cls_method=True)
@@ -390,7 +387,7 @@ async def get_from_id(
     account_id: int,
     session: aiohttp.ClientSession = None,
     logger: Optional[lg.Logger] = None,
-    debug: bool = False
+    debug: bool = False,
 ) -> DomoAccount:
     """
     Retrieves account metadata and attempts to retrieve config information.
@@ -401,28 +398,35 @@ async def get_from_id(
     account_res = await get_account_from_id(
         full_auth=full_auth, account_id=account_id, session=session
     )
-    
+
     if debug:
         print(account_res.response)
 
-    message = f'metadata retreived from get_account_from_id: account - {account_id} from {full_auth.domo_instance}'
+    message = f"metadata retreived from get_account_from_id: account - {account_id} from {full_auth.domo_instance}"
 
     if not account_res.is_success:
-        message = f"ERROR - no {message}" 
+        message = f"ERROR - no {message}"
         if logger:
-            logger.log_error(message=message, 
-                             entity_id=account_id, domo_instance = full_auth.domo_instance)
+            logger.log_error(
+                message=message,
+                entity_id=account_id,
+                domo_instance=full_auth.domo_instance,
+            )
 
-        raise InvalidAccountError(message = message, 
-        domo_instance = full_auth.domo_instance, 
-        status = account_res.status
+        raise InvalidAccountError(
+            message=message,
+            domo_instance=full_auth.domo_instance,
+            status=account_res.status,
         )
 
     obj = account_res.response
-    acc = cls._from_json(obj, full_auth, logger = logger)
+    acc = cls._from_json(obj, full_auth, logger=logger)
 
     acc.logger.log_info(
-        message=f"SUCCESS - {message}", entity_id=account_id, domo_instance=full_auth.domo_instance)
+        message=f"SUCCESS - {message}",
+        entity_id=account_id,
+        domo_instance=full_auth.domo_instance,
+    )
 
     # get account config
     config_res = await get_account_config(
@@ -432,26 +436,31 @@ async def get_from_id(
         session=session,
     )
 
-    message = f'config data retrieved from get_account_config: data provider - {acc.data_provider_type} - for account -{account_id} in {full_auth.domo_instance}'
+    message = f"config data retrieved from get_account_config: data provider - {acc.data_provider_type} - for account -{account_id} in {full_auth.domo_instance}"
 
     if not config_res.is_success:
         acc.logger.log_warning(
-            message=f'WARNING - no {message}', 
-            entity_id=account_id, 
-            domo_instance=full_auth.domo_instance)
+            message=f"WARNING - no {message}",
+            entity_id=account_id,
+            domo_instance=full_auth.domo_instance,
+        )
         return acc
-    
-    acc.logger.log_info(
-        message=f'SUCCESS - {message}',
-        entity_id=account_id, 
-        domo_instance=full_auth.domo_instance)
 
+    acc.logger.log_info(
+        message=f"SUCCESS - {message}",
+        entity_id=account_id,
+        domo_instance=full_auth.domo_instance,
+    )
 
     # map account config to AccountConfig enum
     enum_clean = re.sub("-", "_", acc.data_provider_type)
 
     config_match = next(
-        (member.value for member in AccountConfig if enum_clean.startswith(member.name)),
+        (
+            member.value
+            for member in AccountConfig
+            if enum_clean.startswith(member.name)
+        ),
         None,
     )
 
@@ -459,7 +468,6 @@ async def get_from_id(
         return acc
 
     acc.config = config_match._from_json(config_res.response)
-    
 
     return acc
 
@@ -491,16 +499,17 @@ async def update_config(
 
     if not update_account_config_res.is_success:
         message = f"FAILURE - no {message}"
-        self.logger.log_error(message=message,
-                              entity_id=self.id,
-                              domo_instance=full_auth.domo_instance)
+        self.logger.log_error(
+            message=message, entity_id=self.id, domo_instance=full_auth.domo_instance
+        )
 
-        raise UpdateAccountConfigError(status=update_account_config_res.status,
-                                       message=message,
-                                       domo_instance=full_auth.domo_instanec)
+        raise UpdateAccountConfigError(
+            status=update_account_config_res.status,
+            message=message,
+            domo_instance=full_auth.domo_instanec,
+        )
 
     return await self.get_from_id(full_auth=full_auth, account_id=self.id)
-
 
 # %% ../nbs/80_DomoAccount.ipynb 39
 @patch_to(DomoAccount)
@@ -527,16 +536,21 @@ async def update_name(
 
     if not update_account_name_res.is_success:
         message = f"FAILURE - {message}"
-        self.logger.log_error(message=message,
-                              entity_id=self.id,
-                              domo_instance=full_auth.domo_instance)
-                              
-        raise UpdateAccountConfigError(status=update_account_name_res.status,
-                                       message=message, domo_instance=full_auth.domo_instance
-                                       )
+        self.logger.log_error(
+            message=message, entity_id=self.id, domo_instance=full_auth.domo_instance
+        )
+
+        raise UpdateAccountConfigError(
+            status=update_account_name_res.status,
+            message=message,
+            domo_instance=full_auth.domo_instance,
+        )
 
     self.logger.log_info(
-        message=f"SUCCESS - {message}", entity_id=self.id, domo_instance=full_auth.domo_instance)
+        message=f"SUCCESS - {message}",
+        entity_id=self.id,
+        domo_instance=full_auth.domo_instance,
+    )
 
     return await self.get_from_id(full_auth=full_auth, account_id=self.id)
 
@@ -546,7 +560,6 @@ async def create_account(
     cls,
     display_name: str,
     domoaccount_config: DomoAccount_Config,
-
     full_auth: dmda.DomoFullAuth,
     debug: bool = False,
     session: Optional[aiohttp.ClientSession] = None,
@@ -557,9 +570,8 @@ async def create_account(
     config_body = domoaccount_config.to_json()
 
     account_body = cls.config_to_json(
-        display_name,
-        domoaccount_config.data_provider_type,
-        configuration=config_body)
+        display_name, domoaccount_config.data_provider_type, configuration=config_body
+    )
 
     res = await create_account_route(
         config_body=account_body,
@@ -585,7 +597,7 @@ async def delete_account(
     full_auth: dmda.DomoFullAuth,
     debug: bool = False,
     session: aiohttp.ClientSession = None,
-    logger: Optional[lg.Logger] = None
+    logger: Optional[lg.Logger] = None,
 ) -> bool:  # returns True or False if account successfully deleted
 
     """classmethod to delete an account"""
@@ -606,18 +618,21 @@ async def delete_account(
         message = "FAILURE - {message}"
 
         if logger:
-            logger.log_error(message=message, entity_id=account_id,
-                             domo_instance=full_auth.domo_instance)
+            logger.log_error(
+                message=message,
+                entity_id=account_id,
+                domo_instance=full_auth.domo_instance,
+            )
 
-        raise DeleteAccountError(status=res.status,
-                                 message=message,
-                                 domo_instance=full_auth.domo_instance)
+        raise DeleteAccountError(
+            status=res.status, message=message, domo_instance=full_auth.domo_instance
+        )
 
     message = "SUCCESS - {message}"
 
     if logger:
-        logger.log_info(message=message, entity_id=account_id,
-                        domo_instance=full_auth.domo_instance)
+        logger.log_info(
+            message=message, entity_id=account_id, domo_instance=full_auth.domo_instance
+        )
 
     return True
-
