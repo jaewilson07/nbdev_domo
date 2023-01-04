@@ -2,6 +2,7 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - 80_DomoAccount.ipynb
       - 90_DomoAuth.ipynb
       - 95_Logger.ipynb
       - 95_Transport.ipynb
