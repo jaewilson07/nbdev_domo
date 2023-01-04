@@ -52,7 +52,24 @@ async def get_accounts(
 
     return await domo_transport.get(url=url)
 
-# %% ../nbs/80_DomoAccount.ipynb 9
+# %% ../nbs/80_DomoAccount.ipynb 8
+import os
+import json
+import pandas as pd
+
+try:
+    creds = json.loads(os.environ["DOJO_CREDS"])
+
+    domo_auth = dmda.DomoFullAuth(
+        domo_username=creds.get("domo_username", "test@domo.com"),
+        domo_password=creds.get("domo_password", "testpassword"),
+        domo_instance="domo-dojo",
+    )
+except Exception as e:
+    print(e)
+
+
+# %% ../nbs/80_DomoAccount.ipynb 10
 async def get_account_from_id(
     account_id: int,
     full_auth: dmda.DomoFullAuth,
@@ -72,7 +89,7 @@ async def get_account_from_id(
 
     return await domo_transport.get(url=url)
 
-# %% ../nbs/80_DomoAccount.ipynb 12
+# %% ../nbs/80_DomoAccount.ipynb 13
 async def get_account_config(
     account_id: int,
     data_provider_type: str,
@@ -93,7 +110,7 @@ async def get_account_config(
 
     return await domo_transport.get(url=url)
 
-# %% ../nbs/80_DomoAccount.ipynb 16
+# %% ../nbs/80_DomoAccount.ipynb 17
 async def update_account_config(
     account_id: int,
     config_body: dict,  # config_body is determined by the data_provider_type
@@ -118,7 +135,7 @@ async def update_account_config(
     )
 
 
-# %% ../nbs/80_DomoAccount.ipynb 17
+# %% ../nbs/80_DomoAccount.ipynb 18
 async def update_account_name(
     account_id: int,
     account_name: str,
@@ -141,7 +158,7 @@ async def update_account_name(
         url=url, body=account_name, session=session, debug=debug
     )
 
-# %% ../nbs/80_DomoAccount.ipynb 21
+# %% ../nbs/80_DomoAccount.ipynb 22
 async def create_account_route(
     config_body: dict,  # config body is dependent on data provider type
     full_auth: dmda.DomoFullAuth,  # domo auth
@@ -163,7 +180,7 @@ async def create_account_route(
         url=url, body=config_body, debug=debug, session=session
     )
 
-# %% ../nbs/80_DomoAccount.ipynb 23
+# %% ../nbs/80_DomoAccount.ipynb 24
 async def delete_account_route(
     account_id: str,
     full_auth: dmda.DomoFullAuth,
@@ -184,7 +201,7 @@ async def delete_account_route(
 
     return await domo_transport.delete(url=url, debug=debug, session=session)
 
-# %% ../nbs/80_DomoAccount.ipynb 25
+# %% ../nbs/80_DomoAccount.ipynb 26
 class DomoAccount_Config(ABC):
     """
     Abstract method for defining Domo Account Configuration bodies.
@@ -203,7 +220,7 @@ class DomoAccount_Config(ABC):
     def to_json(self):
         pass
 
-# %% ../nbs/80_DomoAccount.ipynb 27
+# %% ../nbs/80_DomoAccount.ipynb 28
 @dataclass
 class DomoAccount_Config_Athena_HighBandwidthConnector(DomoAccount_Config):
     aws_access_key: str
@@ -267,7 +284,7 @@ class DomoAccount_Config_DomoGovernance(DomoAccount_Config):
     def to_json(self):
         return {"apikey": self.api_key, "customer": self.customer}
 
-# %% ../nbs/80_DomoAccount.ipynb 29
+# %% ../nbs/80_DomoAccount.ipynb 30
 class AccountConfig(Enum):
     """enum to match account types with config classes"""
 
@@ -275,7 +292,7 @@ class AccountConfig(Enum):
     abstract_credential_store = DomoAccount_Config_AbstractCredential
     domo_governance = DomoAccount_Config_DomoGovernance
 
-# %% ../nbs/80_DomoAccount.ipynb 31
+# %% ../nbs/80_DomoAccount.ipynb 32
 @dataclass
 class DomoAccount:
     """class for interacting with Domo Account entities"""
@@ -324,7 +341,7 @@ class DomoAccount:
             "configurations": configuration,
         }
 
-# %% ../nbs/80_DomoAccount.ipynb 32
+# %% ../nbs/80_DomoAccount.ipynb 33
 class InvalidAccountError(dmda.DomoErrror):
     """return invalid account id sent to API"""
 
@@ -376,7 +393,7 @@ class DeleteAccountError(dmda.DomoErrror):
 
         super().__init__(status=status, message=message, domo_instance=domo_instance)
 
-# %% ../nbs/80_DomoAccount.ipynb 33
+# %% ../nbs/80_DomoAccount.ipynb 34
 @patch_to(DomoAccount, cls_method=True)
 async def get_from_id(
     cls,
@@ -468,7 +485,7 @@ async def get_from_id(
 
     return acc
 
-# %% ../nbs/80_DomoAccount.ipynb 38
+# %% ../nbs/80_DomoAccount.ipynb 39
 @patch_to(DomoAccount)
 async def update_config(
     self,
@@ -508,7 +525,7 @@ async def update_config(
 
     return await self.get_from_id(full_auth=full_auth, account_id=self.id)
 
-# %% ../nbs/80_DomoAccount.ipynb 39
+# %% ../nbs/80_DomoAccount.ipynb 40
 @patch_to(DomoAccount)
 async def update_name(
     self,
@@ -551,7 +568,7 @@ async def update_name(
 
     return await self.get_from_id(full_auth=full_auth, account_id=self.id)
 
-# %% ../nbs/80_DomoAccount.ipynb 42
+# %% ../nbs/80_DomoAccount.ipynb 43
 @patch_to(DomoAccount, cls_method=True)
 async def create_account(
     cls,
