@@ -468,7 +468,7 @@ async def get_from_id(
 
     return acc
 
-# %% ../nbs/80_DomoAccount.ipynb 38
+# %% ../nbs/80_DomoAccount.ipynb 37
 @patch_to(DomoAccount)
 async def update_config(
     self,
@@ -508,7 +508,7 @@ async def update_config(
 
     return await self.get_from_id(full_auth=full_auth, account_id=self.id)
 
-# %% ../nbs/80_DomoAccount.ipynb 39
+# %% ../nbs/80_DomoAccount.ipynb 38
 @patch_to(DomoAccount)
 async def update_name(
     self,
@@ -551,7 +551,7 @@ async def update_name(
 
     return await self.get_from_id(full_auth=full_auth, account_id=self.id)
 
-# %% ../nbs/80_DomoAccount.ipynb 42
+# %% ../nbs/80_DomoAccount.ipynb 41
 @patch_to(DomoAccount, cls_method=True)
 async def create_account(
     cls,
