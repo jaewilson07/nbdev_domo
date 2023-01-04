@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 import aiohttp
 from typing import Optional, Union
 import nbdev_domo.ResponseGetData as rgd
+import nbdev_domo.Logger as lg
 from nbdev_domo.Transport import TransportAsync
-from nbdev_domo.Logger import Logger
 
 # %% ../nbs/90_DomoAuth.ipynb 5
 async def get_full_auth(
@@ -110,7 +110,7 @@ class _DomoAuth_Optional:
 
     url_manual_login: Optional[str] = None
 
-    logger : Optional[Logger] = None
+    logger : Optional[lg.Logger] = None
 
     async def get_auth_token(self) -> Union[str, None]:
         """placeholder method"""
@@ -184,7 +184,8 @@ class DomoFullAuth(_DomoAuth_Optional, _DomoFullAuth_Required):
     """use for full authentication token"""
 
     def __post_init__(self):
-        self.logger = self.logger or Logger(app_name = 'default_domo_full_auth')
+        if not self.logger:
+            self.logger = lg.Logger(app_name = 'default_domo_full_auth', domo_instance = self.domo_instance)
             
 
     async def generate_auth_header(self, token: str = None) -> dict:
@@ -208,7 +209,7 @@ class DomoFullAuth(_DomoAuth_Optional, _DomoFullAuth_Required):
         )
 
         if res.is_success and res.response.get("reason") == "INVALID_CREDENTIALS":
-            message = str(res.response.get("reason"))
+            message = f"invalid credentials"
             
             self.logger.log_error(message)
 
@@ -255,7 +256,8 @@ class DomoTokenAuth(_DomoAuth_Optional, _DomoTokenAuth_Required):
     """
 
     def __post_init__(self):
-        self.logger = self.logger or Logger(app_name='default_domo_token_auth')
+        if not self.logger:
+            self.logger = lg.Logger(app_name='default_domo_token_auth', domo_instance = self.domo_instance)
 
     def generate_auth_header(self, token: str) -> dict:
         self.auth_header = {"x-domo-developer-token": token}
@@ -308,12 +310,12 @@ class _DomoDeveloperAuth_Required(_DomoAuth_Required):
 class DomoDeveloperAuth(_DomoAuth_Optional, _DomoDeveloperAuth_Required):
     """use for full authentication token"""
 
-    def __init__(self, domo_client_id: str, domo_client_secret: str, logger : Optional[Logger] = None):
+    def __init__(self, domo_client_id: str, domo_client_secret: str, logger : Optional[lg.Logger] = None):
         self.domo_client_id = domo_client_id
         self.domo_client_secret = domo_client_secret
         self.domo_instance = ""
 
-        self.logger = logger or Logger('default_domo_developer_auth')
+        self.logger = logger or lg.Logger(app_name='default_domo_developer_auth', domo_instance = self.domo_instance)
 
     async def generate_auth_header(self, token: str) -> dict:
         if not self.token:

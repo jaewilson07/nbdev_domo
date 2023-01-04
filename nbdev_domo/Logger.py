@@ -13,7 +13,6 @@ import traceback
 
 from fastcore.basics import patch_to
 
-
 # %% ../nbs/95_Logger.ipynb 4
 class Logger:
     """log class with user customizeable output method"""
@@ -24,6 +23,8 @@ class Logger:
     logs: List[dict]
     breadcrumb: Optional[list]
 
+    entity_id: Optional[str]
+    domo_instance: Optional[str]
     # function to call with write_logs method.
     output_fn: Optional[callable] = None
 
@@ -34,6 +35,8 @@ class Logger:
         output_fn: Optional[
             callable
         ] = None,  # function to call with write_logs method.
+        entity_id: Optional[str] = None,
+        domo_instance: Optional[str] = None,
     ):
 
         self.app_name = app_name
@@ -41,6 +44,8 @@ class Logger:
         self.root_module = root_module
         self.logs = []
         self.breadcrumb = []
+        self.domo_instance = domo_instance
+        self.entity_id = entity_id
 
     def _add_crumb(self, crumb):
         if crumb not in self.breadcrumb:
@@ -56,7 +61,9 @@ def _get_traceback(
     self,
     root_module: str = "<module>",
     num_stacks_to_drop=0,  # drop entries from the top of stack to exclude the functions that retrieve the traceback
-) -> [traceback.FrameSummary]:  # returns a filtered list of FrameSummaries from traceback
+) -> [
+    traceback.FrameSummary
+]:  # returns a filtered list of FrameSummaries from traceback
     """method that retrieves traceback"""
 
     tb = traceback.extract_stack()
@@ -103,7 +110,7 @@ def _get_traceback_details(
 # %% ../nbs/95_Logger.ipynb 14
 @patch_to(Logger)
 def _add_log(
-    self, message: str, type_str: str, debug=False, num_stacks_to_drop=3
+    self, message: str, type_str: str, debug=False, num_stacks_to_drop=3, entity_id: Optional[str] = None, domo_instance: Optional[str] = None
 ) -> dict:
     """internal method to append message to log"""
 
@@ -119,6 +126,8 @@ def _add_log(
         "log_type": type_str,
         "log_message": message,
         "breadcrumb": "->".join(self.breadcrumb),
+        "domo_instance": domo_instance or self.domo_instance,
+        "entity_id": entity_id or self.entity_id
     }
 
     traceback_details = self._get_traceback_details(traceback_list)
@@ -140,10 +149,15 @@ def _add_log(
 
 
 @patch_to(Logger)
-def log_info(self, message, debug=False, num_stacks_to_drop=3):
+def log_info(self, message,
+             entity_id: Optional[str] = None,
+             domo_instance: Optional[str] = None,
+             debug=False, num_stacks_to_drop=3):
     """log an informational message"""
     return self._add_log(
         message=message,
+        entity_id=entity_id,
+        domo_instance=domo_instance,
         type_str="Info",
         num_stacks_to_drop=num_stacks_to_drop,
         debug=debug,
@@ -151,11 +165,15 @@ def log_info(self, message, debug=False, num_stacks_to_drop=3):
 
 
 @patch_to(Logger)
-def log_error(self, message, debug=False, num_stacks_to_drop=3):
+def log_error(self, message,
+              entity_id: Optional[str] = None,
+              domo_instance: Optional[str] = None, debug=False, num_stacks_to_drop=3):
     """log an error message"""
 
     return self._add_log(
         message=message,
+        entity_id = entity_id,
+        domo_instance = domo_instance,
         type_str="Error",
         num_stacks_to_drop=num_stacks_to_drop,
         debug=debug,
@@ -163,18 +181,24 @@ def log_error(self, message, debug=False, num_stacks_to_drop=3):
 
 
 @patch_to(Logger)
-def log_warning(self, message, debug=False, num_stacks_to_drop=3):
+def log_warning(self, message,
+                entity_id: Optional[str] = None,
+                domo_instance: Optional[str] = None, debug=False, num_stacks_to_drop=3):
     """log a warning message"""
 
     return self._add_log(
         message=message,
+        entity_id=entity_id,
+        domo_instance=domo_instance,
         type_str="Warning",
         num_stacks_to_drop=num_stacks_to_drop,
         debug=debug,
     )
+
 
 # %% ../nbs/95_Logger.ipynb 17
 @patch_to(Logger)
 def output_log(self):
     """calls the user defined output function"""
     return self.output_fn(self.logs)
+
