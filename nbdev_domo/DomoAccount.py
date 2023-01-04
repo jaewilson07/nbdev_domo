@@ -338,9 +338,6 @@ class InvalidAccountError(dmda.DomoErrror):
         super().__init__(status=status, message=message, domo_instance=domo_instance)
 
 
-# | export
-
-
 class InvalidAccountConfigError(dmda.DomoErrror):
     """return if DomoAccount does not have a valid config attribute"""
 
