@@ -1,5 +1,9 @@
 name: import_google
 
+on:
+  push:
+    branches: [ "main", "master" ]
+
 env:
   GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GCP_KEY}}
 
