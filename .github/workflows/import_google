@@ -23,7 +23,7 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
-        workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        workload_identity_provider: 'projects/572814157492/locations/global/workloadIdentityPools/github-wip/providers/googlegithubprovider'
         service_account: 'jaewilson07@api-project-572814157492.iam.gserviceaccount.com'
 
     - uses: r7kamura/google-docs-to-github@v3
