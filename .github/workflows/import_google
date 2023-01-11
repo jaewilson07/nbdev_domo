@@ -1,10 +1,4 @@
-# https://github.com/marketplace/actions/google-docs-to-github
-# .github/workflows/import_google.yml
 name: import_google
-
-on:
-  schedule:
-    - cron: "0 0 * * *"
 
 env:
   GOOGLE_APPLICATION_CREDENTIALS : ${{ secrets.GCP_KEY}}
