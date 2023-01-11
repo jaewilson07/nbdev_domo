@@ -9,11 +9,23 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
-      - uses: google-github-actions/auth@v0
-        with:
-          service_account: my-service-account-id@my-project-id.iam.gserviceaccount.com
-          workload_identity_provider: projects/my-project-id/locations/global/workloadIdentityPools/my-pool-id/providers/my-provider-id
-      - uses: r7kamura/google-docs-to-github@v3
-        with:
-          google_drive_folder_id: 1zD5A9LcT1aHz5_R_eXvikWy1l7SGcjH_
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v3'
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'jaewilson07@api-project-572814157492.iam.gserviceaccount.com'
+
+    - uses: r7kamura/google-docs-to-github@v3
+      with:
+        google_drive_folder_id: 1VyzBe-sJCDujP6D6dok7Za-u_syXpfdU
