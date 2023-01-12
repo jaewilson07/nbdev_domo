@@ -23,6 +23,9 @@ jobs:
         token_format: 'access_token'
         credentials_json: '${{ secrets.GCP_KEY }}'
         access_token_scopes: 'https://www.googleapis.com/auth/drive'
+    
+    - run: |-
+        echo '${{ steps.auth.outputs.access_token}}'
         
     - uses: r7kamura/google-docs-to-github@v3
       with:
