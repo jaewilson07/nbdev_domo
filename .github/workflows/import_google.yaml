@@ -18,6 +18,7 @@ jobs:
     - uses: 'actions/checkout@v3'
       with:
         ref: 'gdoc'
+        token : '${{ secrets.GH_PAT}}'
 
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
@@ -34,3 +35,4 @@ jobs:
       with:
         google_drive_folder_id: 1z-u8KL3K9vHCyJW9Y2mcSCiaUpJEe_TK
         github_branch: gdoc
+        github_token : '${{ secrets.GH_PAT}}'
