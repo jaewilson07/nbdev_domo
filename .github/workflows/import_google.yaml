@@ -33,6 +33,6 @@ jobs:
         
     - uses: r7kamura/google-docs-to-github@v3
       with:
-        google_drive_folder_id: 1z-u8KL3K9vHCyJW9Y2mcSCiaUpJEe_TK
+        google_drive_folder_id: 1RsTyNtKpbJfNEy75WuayMEsCneKl8f6f
         github_branch: gdoc
         github_token : '${{ secrets.GH_PAT}}'
