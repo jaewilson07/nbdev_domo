@@ -20,7 +20,9 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
+        token_format: 'access_token'
         credentials_json: '${{ secrets.GCP_KEY }}'
+        access_token_scopes: 'https://www.googleapis.com/auth/drive'
         
     - uses: r7kamura/google-docs-to-github@v3
       with:
