@@ -32,4 +32,4 @@ jobs:
       with:
         google_drive_folder_id: 1z-u8KL3K9vHCyJW9Y2mcSCiaUpJEe_TK
         github_branch: gdoc
-        github_token : ${{ secrets.GH_PAT}}
+        github_token : '${{ secrets.GH_PAT}}'
