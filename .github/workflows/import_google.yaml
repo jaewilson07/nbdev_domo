@@ -29,4 +29,4 @@ jobs:
         
     - uses: r7kamura/google-docs-to-github@v3
       with:
-        google_drive_folder_id: 1VyzBe-sJCDujP6D6dok7Za-u_syXpfdU
+        google_drive_folder_id: 1z-u8KL3K9vHCyJW9Y2mcSCiaUpJEe_TK
