@@ -1,6 +1,7 @@
 name: import_google
 
-on:
+on: 
+  workflow_dispatch:
   push:
     branches: [ "gdocs"]
 
