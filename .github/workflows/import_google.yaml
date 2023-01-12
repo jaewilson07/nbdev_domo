@@ -31,3 +31,4 @@ jobs:
     - uses: r7kamura/google-docs-to-github@v3
       with:
         google_drive_folder_id: 1z-u8KL3K9vHCyJW9Y2mcSCiaUpJEe_TK
+        github_branch: gdoc
